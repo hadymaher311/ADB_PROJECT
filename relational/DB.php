@@ -72,6 +72,28 @@ class DB {
         return false;
     }
 
+    public function insertMany($table, $fields = [])
+    {
+        $field_string = '';
+        $values = [];
+
+        foreach (array_keys($fields[0]) as $field => $value) {
+            $field_string .= '`' . $value . '`,';
+        }
+
+        $field_string = rtrim($field_string, ',');
+        foreach ($fields as $field) {
+            $values[] = '("' . implode('", "', array_values($field)) . '")';
+        }
+        $values = implode(',', $values);
+        $sql = "INSERT INTO {$table} ({$field_string}) VALUES {$values}";
+        if ($this->_query = $this->_pdo->prepare($sql)) {
+            
+            return $this->_executeQuery();
+        }
+        return 0;
+    }
+
     public function update($table, $id, $fields = [])
     {
         $field_string = '';

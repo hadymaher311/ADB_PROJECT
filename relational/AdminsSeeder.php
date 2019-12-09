@@ -12,18 +12,22 @@ class AdminsSeeder
         $this->_faker = Faker\Factory::create();
     }
 
-    public function seed($seeds = 1)
+    public function seed($seeds = 1, $buckets = 1)
     {
-        for ($i = 0; $i < $seeds; $i++) {
-            $this->_db->insert('admins', [
-                'name' => $this->_faker->name,
-                'email' => $this->_faker->unique()->email,
-                'phone' => $this->_faker->e164PhoneNumber,
-                'status' => $this->_faker->randomDigit % 2,
-                'password' => password_hash($this->_faker->word, PASSWORD_DEFAULT),
-                'created_at' => Carbon\Carbon::now()->toDateString(),
-                'updated_at' => Carbon\Carbon::now()->toDateString(),
-            ]);
+        for ($i = 0; $i < $seeds; $i+=$buckets) {
+            $records = [];
+            for ($j = 0; $j < $buckets; $j++) {
+                $records[] = [
+                    'name' => $this->_faker->name,
+                    'email' => $this->_faker->unique()->email,
+                    'phone' => $this->_faker->e164PhoneNumber,
+                    'status' => $this->_faker->randomDigit % 2,
+                    'password' => password_hash($this->_faker->word, PASSWORD_DEFAULT),
+                    'created_at' => Carbon\Carbon::now()->toDateString(),
+                    'updated_at' => Carbon\Carbon::now()->toDateString(),
+                ];
+            }
+            $this->_db->insertMany('admins', $records);
         }
     }
 }

@@ -12,15 +12,19 @@ class TagsSeeder
         $this->_faker = Faker\Factory::create();
     }
 
-    public function seed($seeds = 1)
+    public function seed($seeds = 1, $buckets = 1)
     {
-        for ($i = 0; $i < $seeds; $i++) {
-            $this->_db->insert('tags', [
-                'name' => $this->_faker->word,
-                'slug' => $this->_faker->slug,
-                'created_at' => Carbon\Carbon::now()->toDateString(),
-                'updated_at' => Carbon\Carbon::now()->toDateString(),
-            ]);
+        for ($i = 0; $i < $seeds; $i+=$buckets) {
+            $records = [];
+            for ($j = 0; $j < $buckets; $j++) {
+                $records[] = [
+                    'name' => $this->_faker->word,
+                    'slug' => $this->_faker->slug,
+                    'created_at' => Carbon\Carbon::now()->toDateString(),
+                    'updated_at' => Carbon\Carbon::now()->toDateString(),
+                ];
+            }
+            $this->_db->insertMany('tags', $records);
         }
     }
 }
