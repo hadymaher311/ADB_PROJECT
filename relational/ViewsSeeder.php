@@ -12,19 +12,19 @@ class ViewsSeeder
         $this->_faker = Faker\Factory::create();
     }
 
-    public function seed($seeds = 1, $buckets = 1)
+    public function seed($pdo, $seeds = 1)
     {
-        for ($i = 0; $i < $seeds; $i+=$buckets) {
-            $records = [];
-            for ($j = 0; $j < $buckets; $j++) {
-                $records[] = [
-                    'ip' => $this->_faker->ipv4,
-                    'user_id' => $this->_faker->numberBetween(1, $this->_db->getLastID('users')[0]->id),
-                    'created_at' => Carbon\Carbon::now()->toDateString(),
-                    'updated_at' => Carbon\Carbon::now()->toDateString(),
-                ];
-            }
-            $this->_db->insertMany('views', $records);
+        $records = "";
+        $user_id = $this->_db->getLastID('users')[0]->id;
+        for ($i = 0; $i < $seeds; $i++) {
+                $records .=
+                    $this->_faker->ipv4 . ',' .
+                    $this->_faker->numberBetween(1, $user_id) . ',' .
+                    Carbon\Carbon::now()->toDateString() . ',' .
+                    Carbon\Carbon::now()->toDateString() . "\n";
         }
+        file_put_contents("views.csv", $records);
+        $stmt = $pdo->prepare("LOAD DATA LOCAL INFILE 'views.csv' INTO TABLE views FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' (ip, user_id, created_at, updated_at);");
+        $stmt->execute();
     }
 }

@@ -12,19 +12,18 @@ class CategoriesSeeder
         $this->_faker = Faker\Factory::create();
     }
 
-    public function seed($seeds = 1, $buckets = 1)
+    public function seed($pdo, $seeds = 1)
     {
-        for ($i = 0; $i < $seeds; $i+=$buckets) {
-            $records = [];
-            for ($j = 0; $j < $buckets; $j++) {
-                $records[] = [
-                    'name' => $this->_faker->word,
-                    'slug' => $this->_faker->slug,
-                    'created_at' => Carbon\Carbon::now()->toDateString(),
-                    'updated_at' => Carbon\Carbon::now()->toDateString(),
-                ];
-            }
-            $this->_db->insertMany('categories', $records);
+        $records = "";
+        for ($i = 0; $i < $seeds; $i++) {
+            $records .=
+                $this->_faker->word . ',' .
+                $this->_faker->slug . ',' .
+                Carbon\Carbon::now()->toDateString() . ',' .
+                Carbon\Carbon::now()->toDateString() . "\n";
         }
+        file_put_contents("categories.csv", $records);
+        $stmt = $pdo->prepare("LOAD DATA LOCAL INFILE 'categories.csv' INTO TABLE categories FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' (name, slug, created_at, updated_at);");
+        $stmt->execute();
     }
 }
