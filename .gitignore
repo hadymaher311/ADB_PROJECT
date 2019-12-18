@@ -1,2 +1,3 @@
 relational/vendor
 relational/*.csv
+*.csv

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 07, 2019 at 10:09 PM
+-- Generation Time: Dec 18, 2019 at 10:48 PM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -46,7 +46,6 @@ CREATE TABLE `admins` (
 --
 
 CREATE TABLE `admin_roles` (
-  `id` bigint(20) UNSIGNED NOT NULL,
   `admin_id` bigint(20) UNSIGNED NOT NULL,
   `role_id` bigint(20) UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -102,7 +101,6 @@ CREATE TABLE `comments` (
 --
 
 CREATE TABLE `likes` (
-  `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
   `post_id` bigint(20) UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -121,9 +119,8 @@ CREATE TABLE `posts` (
   `subtitle` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `slug` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `body` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status` tinyint(1) DEFAULT NULL,
-  `posted_by` bigint(20) UNSIGNED DEFAULT NULL,
-  `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT 0,
+  `posted_by` bigint(20) UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -212,9 +209,8 @@ ALTER TABLE `admins`
 -- Indexes for table `admin_roles`
 --
 ALTER TABLE `admin_roles`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `admin_roles_admin_id_foreign` (`admin_id`),
-  ADD KEY `admin_roles_role_id_foreign` (`role_id`);
+  ADD KEY `admin_roles_admin_id_index` (`admin_id`),
+  ADD KEY `admin_roles_role_id_index` (`role_id`);
 
 --
 -- Indexes for table `categories`
@@ -241,9 +237,8 @@ ALTER TABLE `comments`
 -- Indexes for table `likes`
 --
 ALTER TABLE `likes`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `likes_post_id_foreign` (`post_id`),
-  ADD KEY `likes_user_id_foreign` (`user_id`);
+  ADD KEY `likes_user_id_index` (`user_id`),
+  ADD KEY `likes_post_id_index` (`post_id`);
 
 --
 -- Indexes for table `posts`
@@ -296,12 +291,6 @@ ALTER TABLE `admins`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `admin_roles`
---
-ALTER TABLE `admin_roles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
@@ -311,12 +300,6 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `likes`
---
-ALTER TABLE `likes`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
@@ -385,7 +368,7 @@ ALTER TABLE `likes`
 -- Constraints for table `posts`
 --
 ALTER TABLE `posts`
-  ADD CONSTRAINT `posts_posted_by_foreign` FOREIGN KEY (`posted_by`) REFERENCES `admins` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `posts_posted_by_foreign` FOREIGN KEY (`posted_by`) REFERENCES `admins` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `post_tags`
