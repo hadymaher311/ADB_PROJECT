@@ -7,4 +7,4 @@ This is advanced database project for college to build relational and nosql data
 ### Relational database seeder:
 
 - import database schema in your DBMS from file `blog.sql`.
-- run command `php relational/index.php`
+- run command `php relational/index2.php`
