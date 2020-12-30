@@ -14,7 +14,8 @@ class AdminsSeeder
     public function seed($pdo, $seeds = 1)
     {
         $records = "";
-        $password = password_hash('123456789', PASSWORD_DEFAULT);
+        // $password = password_hash('123456789', PASSWORD_DEFAULT);
+        $password = "123456789";
         for ($i = 0; $i < $seeds; $i++) {
             $records .=
                 $this->_faker->name . ',' .
